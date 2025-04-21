@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>소낙의 감도 조정사</title>
+  <style>
+    :root {
+      --primary-color: #0a84ff;
+      --bg-color: #f5f5f7;
+      --card-bg: #ffffff;
+      --text-color: #1c1c1e;
+      --subtext-color: #6e6e73;
+      --border-radius: 12px;
+      --spacing: 1.25rem;
+      --shadow: 0 4px 16px rgba(0,0,0,0.1);
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: var(--bg-color); color: var(--text-color); }
+    .site-header {
+      background: #004d4d;
+      height: 3cm;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .site-header h1 {
+      margin: 0;
+      font-size: 2.1rem;
+      color: white;
+      font-weight: bold;
+    }
+    .container {
+  max-width: 700px; margin: var(--spacing) auto var(--spacing); padding: var(--spacing); background: var(--card-bg); border-radius: var(--border-radius); box-shadow: var(--shadow); }
+    h1 { display:none; }
+    h2 { font-size: 1.25rem; margin-top: 2rem; margin-bottom: var(--spacing); color: var(--text-color); }
+    .form-group { margin-bottom: var(--spacing); }
+    label { display: block; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-color); }
+    input[type=number], select { width: 100%; padding: 0.75rem; border: 1px solid #d1d1d6; border-radius: var(--border-radius); background: var(--bg-color); font-size: 1rem; color: var(--text-color); transition: border-color 0.2s; }
+    input[type=number]:focus, select:focus { outline: none; border-color: var(--primary-color); }
+    .file-drop { position: relative; display: flex; align-items: center; justify-content: center; flex-direction: column; padding: 2rem; border: 2px dashed #d1d1d6; border-radius: var(--border-radius); background: var(--bg-color); cursor: pointer; transition: border-color 0.2s, background 0.2s; }
+    .file-drop.dragover { border-color: var(--primary-color); background: #e5f0ff; }
+    .plus-icon { font-size: 1.25rem; color: var(--subtext-color); margin-bottom: 0.5rem; }
+    #file-list { margin-top: 0.5rem; color: var(--subtext-color); font-size: 0.9rem; }
+    #preview-container { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 1rem; }
+    .preview-thumb { flex: 0 0 80px; height: 45px; border-radius: var(--border-radius); overflow: hidden; background: #000; }
+    .preview-thumb video { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; }
+    button { width: 100%; padding: 0.75rem; margin-top: var(--spacing); font-size: 1rem; font-weight: 600; color: #fff; background: var(--primary-color); border: none; border-radius: var(--border-radius); cursor: pointer; transition: background 0.2s, transform 0.1s; }
+    button:disabled { background: #b0b0b5; cursor: not-allowed; }
+    button:not(:disabled):hover { background: #0a74d1; }
+    .form-group-inline { display: flex; align-items: center; gap: 0.5rem; }
+    .form-group-inline small { margin-top: 0.25rem; color: var(--subtext-color); font-size: 0.85rem; }
+    .box { background: #fff; padding: var(--spacing); border-radius: var(--border-radius); border: 1px solid #d1d1d6; margin-top: var(--spacing); }
+    .link-back { display: flex; justify-content: flex-end; margin-top: var(--spacing); }
+    .link-back a { color: var(--primary-color); text-decoration: none; font-weight: 600; }
+    .chart-container { margin-top: var(--spacing); }
+    canvas { border-radius: var(--border-radius); background: #fff; }
+      .main-heading {
+  z-index: 10;
+  position: relative;
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: white;
+  text-align: center;
+  width: 100%;
+}
+      .sub-heading {
+      font-size: 1rem;
+      font-weight: normal;
+      color: #e0e0e0;
+      margin-top: 0.3rem;
+    }
+      .target-icon {
+      background: orange;
+      border-radius: 4px;
+      padding: 0.2rem 0.4rem;
+      margin-left: 0.3rem;
+      font-size: 1.8rem;
+      display: inline-block;
+    }
+      .header-placeholder {
+      margin-bottom: var(--spacing);
+    }
+      .side-note {
+      max-width: 700px;
+      margin: 2rem auto;
+      padding: 1.5rem;
+      background-color: #fff7e6;
+      border: 2px solid #ffa500;
+      border-radius: var(--border-radius);
+      font-size: 0.95rem;
+      color: #333;
+      box-shadow: var(--shadow);$1
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+  <div class="main-heading">소낙의 감도 보정사 <span class="target-icon">🎯</span>
+    <div class="sub-heading">막창샷들 드루와, 레이저로 가즈아!</div>
+  </div>
+</header>
+<div class="container">
+    <h1>소낙의 감도 조정사</h1>
+    <h2>기본 감도 설정</h2>
+    <div class="form-group">
+      <label for="dpi-input">현재 DPI</label>
+      <select id="dpi-input">
+        <option>400</option><option>800</option><option>1200</option><option>1800</option><option>3200</option>
+      </select>
+    </div>
+    <div class="form-group form-group-inline">
+      <div style="flex:1;">
+        <label for="general-sens-input">일반 감도</label>
+        <input type="number" id="general-sens-input" value="50">
+      </div>
+      <div style="flex:1;">
+        <label for="vertical-sens-input">수직 감도</label>
+        <input type="number" id="vertical-sens-input" value="1">
+      </div>
+    </div>
+    <div class="form-group form-group-inline">
+      <div style="flex:1;">
+        <label for="aim-sens-input">조준 감도</label>
+        <input type="number" id="aim-sens-input" value="50">
+      </div>
+      <div style="flex:1;">
+        <label for="scope-sens-input">스코프 모드 감도</label>
+        <input type="number" id="scope-sens-input" value="50">
+      </div>
+    </div>
+
+    <h2>게임 영상 업로드</h2>
+    <div id="file-drop-zone" class="file-drop">
+      <span class="plus-icon">+</span>
+      <div id="preview-container"></div>
+      <p id="file-list">최대 5개 영상 업로드 가능</p>
+    </div>
+    <input type="file" id="video-input" accept="video/*" multiple hidden>
+
+    <button id="analyze-btn" disabled>분석 시작</button>
+
+    <div class="form-group form-group-inline">
+      <label><input type="checkbox" id="unlock-ratio"> 제한 해제</label>
+      <small>기본 비율 0.8~1.2, 해제 시 원 비율 적용</small>
+    </div>
+
+    <div id="analysis-result" class="box" style="display:none;"></div>
+    <div id="charts" class="chart-container" style="display:none;">
+      <canvas id="spray-scatter"></canvas>
+      <canvas id="recoil-chart"></canvas>
+    </div>
+
+    
+
+  <aside class="side-note">
+    <p>감도 보정은 한 번의 계산으로 끝나는 것이 아닙니다. 다양한 상황의 영상을 업로드하고, 실제 보정값으로 플레이하며 자신의 손에 맞는 감도를 찾아가는 반복 과정이 중요합니다. 소낙의 감도 보정사는 레이저 샷을 원하는 분들 중, 감도 설정이 잘못되었거나 본인에게 맞지 않는 분들에게 영상 기반의 분석을 통해 보정 방향을 제시해주는 조력자입니다.</p>
+  </aside>
+
+  <div class="link-back">
+    <a href="https://sonak-sens-master.vercel.app/">감도계산이 궁금쓰? &gt; 소낙의 감도사로 ㄱㄱ!</a>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const fileDrop = document.getElementById('file-drop-zone');
+    const videoInput = document.getElementById('video-input');
+    const fileList = document.getElementById('file-list');
+    const previewContainer = document.getElementById('preview-container');
+    const analyzeBtn = document.getElementById('analyze-btn');
+    const resultDiv = document.getElementById('analysis-result');
+    const chartsDiv = document.getElementById('charts');
+    const generalInput = document.getElementById('general-sens-input');
+    const verticalInput = document.getElementById('vertical-sens-input');
+    const aimInput = document.getElementById('aim-sens-input');
+    const scopeInput = document.getElementById('scope-sens-input');
+    const unlockRatio = document.getElementById('unlock-ratio');
+
+    let fileArray = [];
+
+    function updateButton() {
+      analyzeBtn.disabled = !(fileArray.length > 0 && fileArray.length <= 5 &&
+        generalInput.value && verticalInput.value && aimInput.value && scopeInput.value);
+    }
+    [generalInput, verticalInput, aimInput, scopeInput].forEach(input => input.addEventListener('input', updateButton));
+
+    function handleFiles(files) {
+      fileArray = Array.from(files).slice(0, 5);
+      const dt = new DataTransfer(); fileArray.forEach(f => dt.items.add(f)); videoInput.files = dt.files;
+      previewContainer.innerHTML = ''; fileList.textContent = `${fileArray.length}개 파일 선택됨`;
+      fileArray.forEach(file => {
+        const url = URL.createObjectURL(file);
+        const thumb = document.createElement('video'); thumb.className = 'preview-thumb';
+        thumb.src = url; thumb.muted = true; thumb.preload = 'metadata'; thumb.playsInline = true;
+        thumb.controls = false; thumb.autoplay = false; thumb.loop = false;
+        thumb.addEventListener('loadeddata', () => thumb.currentTime = 0.1);
+        previewContainer.appendChild(thumb);
+      }); updateButton();
+    }
+    videoInput.addEventListener('change', e => handleFiles(e.target.files));
+    fileDrop.addEventListener('click', () => videoInput.click());
+    fileDrop.addEventListener('dragover', e => { e.preventDefault(); fileDrop.classList.add('dragover'); });
+    fileDrop.addEventListener('dragleave', () => fileDrop.classList.remove('dragover'));
+    fileDrop.addEventListener('drop', e => { e.preventDefault(); fileDrop.classList.remove('dragover'); handleFiles(e.dataTransfer.files); });
+
+    analyzeBtn.addEventListener('click', () => {
+      const demoY = Array.from({ length: 20 }, () => (Math.random() - 0.5) * 10);
+      const absY = demoY.map(Math.abs); const meanY = absY.reduce((a,b)=>a+b)/absY.length;
+      const demoX = Array.from({ length: 20 }, () => (Math.random() - 0.5) * 10);
+      const absX = demoX.map(Math.abs); const meanX = absX.reduce((a,b)=>a+b)/absX.length;
+      let ratio = ((2/meanX)+(2/meanY))/2;
+      if (!unlockRatio.checked) ratio = Math.max(0.8, Math.min(1.2, ratio));
+      const rec = v => (v*ratio).toFixed(2);
+      resultDiv.style.display='block'; resultDiv.innerHTML = `<strong>추천 감도</strong><br>- 일반: ${rec(+generalInput.value)}<br>- 수직: ${rec(+verticalInput.value)}<br>- 조준: ${rec(+aimInput.value)}<br>- 스코프: ${rec(+scopeInput.value)}`;
+      chartsDiv.style.display='block';
+      new Chart('spray-scatter',{type:'scatter',data:{datasets:[{label:'스프레이',data:Array.from({length:50},()=>({x:(Math.random()-0.5)*20,y:(Math.random()-0.5)*20}))}]}});
+      new Chart('recoil-chart',{type:'line',data:{labels:Array.from({length:20},(_,i)=>i+1),datasets:[{label:'|ΔY|',data:absY},{label:'|ΔX|',data:absX}]}});
+    });
+  </script>
+</body>
+</html>
